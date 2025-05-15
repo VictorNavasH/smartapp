@@ -1,4 +1,4 @@
-import { TicketsAnalisis } from "@/components/tickets-analisis"
+import { TicketsAnalisis } from "@/components/analysis/tickets-analisis"
 
 export default function TicketsPage() {
   return (
