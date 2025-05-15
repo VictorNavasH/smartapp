@@ -1,0 +1,283 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    /* Chart colors */
+    --chart-1: 174 71% 45%;
+    --chart-2: 187 98% 40%;
+    --chart-3: 172 98% 48%;
+    --chart-4: 196 60% 43%;
+    --chart-5: 0 69% 72%;
+    --chart-6: 39 100% 73%;
+    --chart-7: 288 100% 84%;
+    --chart-8: 199 71% 56%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #364f6b;
+  }
+  p,
+  span {
+    color: #364f6b;
+  }
+}
+
+@layer components {
+  .text-dark {
+    color: #364f6b;
+  }
+
+  .text-secondary {
+    color: #227c9d;
+  }
+
+  .bg-primary {
+    background-color: #02b1c4;
+  }
+
+  .text-primary {
+    color: #02b1c4;
+  }
+
+  .bg-secondary {
+    background-color: #17c3b2;
+  }
+
+  .text-secondary {
+    color: #17c3b2;
+  }
+
+  .bg-accent {
+    background-color: #fe6d73;
+  }
+
+  .text-accent {
+    color: #fe6d73;
+  }
+
+  .bg-accent-green {
+    background-color: #02f2d2;
+  }
+
+  .text-accent-green {
+    color: #02f2d2;
+  }
+
+  .main-content {
+    font-size: 80%; /* Reducción adicional para el contenido principal */
+    transform-origin: top center;
+    transform: scale(0.9);
+    width: 111.11%; /* Compensar la reducción de escala: 100% / 0.9 = 111.11% */
+    margin-left: -5.55%; /* Centrar el contenido: (111.11% - 100%) / 2 = 5.55% */
+  }
+
+  .sidebar-nav,
+  .top-header {
+    font-size: 100%; /* Mantener el tamaño original */
+    transform: none;
+  }
+
+  .dashboard-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+    padding: 1rem;
+    transition: all 0.2s;
+  }
+
+  .dashboard-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-secondary-green);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--color-secondary);
+  }
+
+  .stat-change-positive {
+    font-size: 0.75rem;
+    color: var(--color-secondary-green);
+    display: flex;
+    align-items: center;
+  }
+
+  .stat-change-negative {
+    font-size: 0.75rem;
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+  }
+
+  .progress-bar {
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: #e2e8f0;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 9999px;
+    background: linear-gradient(to right, #fe6d73, #17c3b2, #02b1c4);
+  }
+
+  .chart-container {
+    height: 12rem;
+    width: 100%;
+  }
+
+  /* Estilos para el efecto de brillo */
+  .glow {
+    position: relative;
+    z-index: 0;
+  }
+
+  /* Asegurarse de que las máscaras funcionen correctamente */
+  @supports (mask-image: linear-gradient(#000, #000)) or (-webkit-mask-image: linear-gradient(#000, #000)) {
+    .glow::after {
+      mask-image: linear-gradient(#000, #000),
+        conic-gradient(
+          from calc((var(--start) - var(--spread)) * 1deg),
+          transparent 0deg,
+          white,
+          transparent calc(var(--spread) * 2deg)
+        ) !important;
+      -webkit-mask-image: linear-gradient(#000, #000),
+        conic-gradient(
+          from calc((var(--start) - var(--spread)) * 1deg),
+          transparent 0deg,
+          white,
+          transparent calc(var(--spread) * 2deg)
+        ) !important;
+      mask-composite: intersect !important;
+      -webkit-mask-composite: source-in !important;
+    }
+  }
+
+  /* Estilos para el efecto de brillo en tarjetas */
+  .card-glow {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem;
+  }
+
+  .card-glow::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    background: conic-gradient(
+      from 0deg at 50% 50%,
+      rgba(2, 177, 196, 0.1) 0deg,
+      rgba(23, 195, 178, 0.1) 90deg,
+      rgba(2, 242, 210, 0.1) 180deg,
+      rgba(34, 124, 157, 0.1) 270deg,
+      rgba(2, 177, 196, 0.1) 360deg
+    );
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+  }
+
+  .card-glow:hover::before {
+    opacity: 1;
+  }
+
+  .card-glow::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    background: radial-gradient(circle at 50% 50%, rgba(23, 195, 178, 0.15), transparent 60%);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    filter: blur(8px);
+  }
+
+  .card-glow:hover::after {
+    opacity: 1;
+  }
+}
