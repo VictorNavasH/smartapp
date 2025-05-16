@@ -15,11 +15,13 @@ import {
   ArrowRightIcon,
   ChevronDownIcon,
   FilterIcon,
+  LineChartIcon,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { themeColors } from "@/lib/theme-config"
-import { BarChart } from "@/components/ui/bar-chart"
+import { LineChart } from "@/components/ui/line-chart"
 import { MetricCard } from "@/components/ui/metric-card"
+import { MenuBar } from "@/components/menu-bar"
 
 export function CostAnalysis() {
   const [activeView, setActiveView] = useState<"costes" | "ventas">("costes")
@@ -148,9 +150,31 @@ export function CostAnalysis() {
   const tituloVista =
     activeView === "costes" ? "Estructura de Costes (% sobre costes totales)" : "Estructura de Costes (% sobre ventas)"
 
+  // Opciones para el MenuBar (reemplazando los botones de pestañas)
+  const menuItems = [
+    {
+      icon: PercentIcon,
+      label: "% sobre Costes",
+      gradient: "radial-gradient(circle, rgba(2,177,196,0.15) 0%, rgba(2,177,196,0) 70%)",
+      iconColor: "text-[#364f6b]",
+    },
+    {
+      icon: DollarSignIcon,
+      label: "% sobre Ventas",
+      gradient: "radial-gradient(circle, rgba(2,177,196,0.15) 0%, rgba(2,177,196,0) 70%)",
+      iconColor: "text-[#364f6b]",
+    },
+  ]
+
   return (
-    <div className="space-y-4">
-      {/* KPIs principales */}
+    <div className="space-y-6">
+      {/* Título principal con estilo consistente */}
+      <div>
+        <h1 className="text-2xl font-bold text-[#364f6b] transform scale-110 origin-left">Estructura de Costes</h1>
+        <p className="text-xs text-[#227c9d]">Distribución de tus costes como porcentaje de las ventas</p>
+      </div>
+
+      {/* KPIs principales con estilo consistente */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpisCostes.map((kpi, index) => (
           <MetricCard
@@ -168,30 +192,23 @@ export function CostAnalysis() {
         ))}
       </div>
 
-      {/* Selector de vista y período */}
-      <div className="flex flex-wrap justify-between items-center gap-2 mb-1">
-        <div className="flex gap-2">
-          <Button
-            variant={activeView === "costes" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveView("costes")}
-            className="text-xs"
-          >
-            % sobre Costes
-          </Button>
-          <Button
-            variant={activeView === "ventas" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveView("ventas")}
-            className="text-xs"
-          >
-            % sobre Ventas
-          </Button>
+      {/* Selector de vista y período en la misma línea */}
+      <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
+        {/* Selector de vista usando MenuBar como en satisfaccion */}
+        <div className="flex-grow max-w-xs">
+          <MenuBar
+            items={menuItems}
+            activeItem={activeView === "costes" ? "% sobre Costes" : "% sobre Ventas"}
+            onItemClick={(item) => setActiveView(item === "% sobre Costes" ? "costes" : "ventas")}
+            className="w-full"
+          />
         </div>
+
+        {/* Selector de período */}
         <div className="flex items-center gap-2">
           <CalendarIcon className="h-4 w-4 text-[#227c9d]" />
           <select
-            className="text-xs border rounded-md p-1 focus:outline-none focus:ring-1 focus:ring-[#02b1c4]"
+            className="text-xs border rounded-md p-1.5 focus:outline-none focus:ring-1 focus:ring-[#02b1c4]"
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
           >
@@ -340,10 +357,13 @@ export function CostAnalysis() {
         </Card>
       </div>
 
-      {/* Evolución mensual de costes */}
+      {/* Evolución mensual de costes - CAMBIADO A LÍNEA CON DEGRADADO */}
       <Card className="p-4 transition-all duration-300 hover:shadow-md hover:border-[#02b1c4]/20">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-sm font-medium text-[#364f6b]">Evolución Mensual de Costes</h3>
+          <div className="flex items-center gap-2">
+            <LineChartIcon className="h-4 w-4 text-[#fe6d73]" />
+            <h3 className="text-sm font-medium text-[#364f6b]">Evolución Mensual de Costes</h3>
+          </div>
           <div className="flex items-center gap-2">
             <select
               className="text-xs border rounded-md p-1 focus:outline-none focus:ring-1 focus:ring-[#02b1c4]"
@@ -361,16 +381,16 @@ export function CostAnalysis() {
             </Button>
           </div>
         </div>
-        <BarChart
+
+        {/* Nuevo gráfico de línea con degradado */}
+        <LineChart
           data={evolucionCostes}
           getLabel={(item) => item.mes}
           getValue={(item) => item.total}
-          getColor={(_, index, isActive) =>
-            isActive ? themeColors.secondary : `${themeColors.primary}${index % 2 === 0 ? "" : "cc"}`
-          }
-          height={180}
-          gap={12}
-          barRadius={8}
+          gradientColor="#fe6d73"
+          height={220}
+          showDots={true}
+          showArea={true}
           renderTooltip={(item) => (
             <>
               <div className="text-sm font-bold text-[#364f6b] mb-2">{item.mes} 2025</div>

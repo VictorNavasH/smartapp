@@ -179,11 +179,13 @@ export function Dashboard() {
           icon={<StarIcon className="h-3.5 w-3.5 text-[#02b1c4]" />}
         />
         <MetricCard
-          title="Alertas Activas"
-          value="3"
-          footer="2 críticas, 1 advertencia"
-          action="Ver detalles"
-          icon={<BellIcon className="h-3.5 w-3.5 text-[#02b1c4]" />}
+          title="Media encuestas"
+          value="4.5"
+          subValue="/5"
+          change={0.3}
+          changeLabel="vs. mes anterior"
+          footer="128 encuestas recibidas"
+          icon={<StarIcon className="h-3.5 w-3.5 text-[#02b1c4]" />}
         />
       </div>
 

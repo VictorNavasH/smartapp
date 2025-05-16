@@ -38,8 +38,12 @@ export default function AppSidebar() {
   return (
     <aside className="fixed left-0 top-0 h-screen bg-white border-r border-gray-100 z-40 w-16 md:w-64 transition-all duration-300 ease-in-out flex flex-col">
       <div className="p-4 border-b border-gray-100 h-[57px] flex items-center">
-        <div className="flex items-center justify-center md:justify-start">
-          <img src="/images/logo.png" alt="NÜA SMART RESTAURANT" className="h-6 w-auto hidden md:block" />
+        <div className="flex items-center justify-center md:justify-start w-full">
+          <img
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/El%20texto%20del%20pa%CC%81rrafo%20%28320%20x%2060%20px%29%20%281990%20x%20278%20px%29-DPh0RlN9GoKbl3ka1sTmMMFemTE4ZC.png"
+            alt="NÜA SMART RESTAURANT"
+            className="h-8 w-auto hidden md:block"
+          />
           <span className="text-sm font-bold text-dark md:hidden">NÜA</span>
         </div>
       </div>

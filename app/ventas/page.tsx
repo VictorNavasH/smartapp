@@ -17,38 +17,26 @@ export default function VentasPage() {
       </div>
 
       <Tabs defaultValue="ventas" className="w-full" onValueChange={setActiveTab}>
-        <div className="relative">
-          <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-          <TabsList className="w-full bg-transparent relative z-10 mb-4">
-            <TabsTrigger
-              value="ventas"
-              className={`flex-1 data-[state=active]:bg-white data-[state=active]:text-[#02b1c4] data-[state=active]:shadow-md transition-all`}
-            >
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-[#02b1c4]"></span>
-                Análisis de Ventas
-              </span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="productos"
-              className={`flex-1 data-[state=active]:bg-white data-[state=active]:text-[#17c3b2] data-[state=active]:shadow-md transition-all`}
-            >
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-[#17c3b2]"></span>
-                Análisis de Productos
-              </span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="equilibrio"
-              className={`flex-1 data-[state=active]:bg-white data-[state=active]:text-[#02f2d2] data-[state=active]:shadow-md transition-all`}
-            >
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-[#02f2d2]"></span>
-                Punto de Equilibrio
-              </span>
-            </TabsTrigger>
-          </TabsList>
-        </div>
+        <TabsList className="border-b w-full justify-start mb-4">
+          <TabsTrigger
+            value="ventas"
+            className="relative h-9 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:text-primary"
+          >
+            Análisis de Ventas
+          </TabsTrigger>
+          <TabsTrigger
+            value="productos"
+            className="relative h-9 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:text-primary"
+          >
+            Análisis de Productos
+          </TabsTrigger>
+          <TabsTrigger
+            value="equilibrio"
+            className="relative h-9 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:text-primary"
+          >
+            Punto de Equilibrio
+          </TabsTrigger>
+        </TabsList>
 
         <TabsContent value="ventas" className="mt-0">
           <SalesAnalysis />

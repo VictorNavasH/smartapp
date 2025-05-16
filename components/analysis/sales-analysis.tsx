@@ -16,12 +16,14 @@ import {
   Cell,
   AreaChart,
   Area,
+  PieChart,
+  Pie,
+  Sector,
 } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { DoughnutChart, type DoughnutChartData } from "@/components/ui/doughnut-chart"
+import type { DoughnutChartData } from "@/components/ui/doughnut-chart"
 import {
   ArrowUpIcon,
-  ArrowDownIcon,
   CalendarIcon,
   TrendingUpIcon,
   ShoppingBagIcon,
@@ -30,6 +32,9 @@ import {
   AwardIcon,
   TrendingDownIcon,
   FilterIcon,
+  SunIcon,
+  MoonIcon,
+  BarChart3Icon,
 } from "lucide-react"
 import {
   getVentasDiarias,
@@ -47,6 +52,7 @@ import {
   type ProductoData,
 } from "@/lib/data-ventas"
 import { formatCurrency } from "@/lib/chart-utils"
+import { MetricCard } from "@/components/ui/metric-card"
 
 export function SalesAnalysis() {
   const [selectedMonth, setSelectedMonth] = useState("2025-05")
@@ -59,6 +65,7 @@ export function SalesAnalysis() {
   const [productoEstrella, setProductoEstrella] = useState<ProductoData | null>(null)
   const [productoDescenso, setProductoDescenso] = useState<ProductoData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [activeIndex, setActiveIndex] = useState(0)
 
   const meses = [
     { value: "2025-05", label: "Mayo 2025" },
@@ -115,6 +122,50 @@ export function SalesAnalysis() {
     color: index === 0 ? "#02b1c4" : "#17c3b2",
   }))
 
+  // Ordenar categorías por ventas para el ranking
+  const categoriasSorted = [...ventasPorCategoria].sort((a, b) => b.totalVentas - a.totalVentas)
+
+  // Renderizado personalizado para el sector activo en el gráfico de turno
+  const renderActiveShape = (props: any) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props
+
+    return (
+      <g>
+        <text x={cx} y={cy - 10} dy={8} textAnchor="middle" fill="#364f6b" className="text-sm font-medium">
+          {payload.name}
+        </text>
+        <text x={cx} y={cy + 10} dy={8} textAnchor="middle" fill="#364f6b" className="text-lg font-bold">
+          {formatEuro(value)}
+        </text>
+        <text x={cx} y={cy + 30} dy={8} textAnchor="middle" fill="#227c9d" className="text-xs">
+          {`${(percent * 100).toFixed(0)}%`}
+        </text>
+        <Sector
+          cx={cx}
+          cy={cy}
+          innerRadius={innerRadius}
+          outerRadius={outerRadius + 6}
+          startAngle={startAngle}
+          endAngle={endAngle}
+          fill={fill}
+        />
+        <Sector
+          cx={cx}
+          cy={cy}
+          startAngle={startAngle}
+          endAngle={endAngle}
+          innerRadius={outerRadius + 6}
+          outerRadius={outerRadius + 10}
+          fill={fill}
+        />
+      </g>
+    )
+  }
+
+  const onPieEnter = (_: any, index: number) => {
+    setActiveIndex(index)
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -165,99 +216,48 @@ export function SalesAnalysis() {
         <>
           {/* KPIs principales */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="overflow-hidden group bg-white hover:shadow-md transition-all duration-300">
-              <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-              <CardHeader className="pb-2 relative z-10">
-                <CardTitle className="text-sm font-medium text-[#227c9d] flex items-center gap-2">
-                  <ShoppingBagIcon className="h-4 w-4" />
-                  Ingresos Totales
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <div className="text-2xl font-bold text-[#364f6b]">
-                  {formatEuro(resumenMensual?.ventasTotales || 0)}
-                </div>
-                <div className="flex items-center mt-1">
-                  <span
-                    className={`text-xs flex items-center ${
-                      resumenMensual?.comparativaMesAnterior && resumenMensual.comparativaMesAnterior > 0
-                        ? "text-[#17c3b2]"
-                        : "text-[#fe6d73]"
-                    }`}
-                  >
-                    {resumenMensual?.comparativaMesAnterior && resumenMensual.comparativaMesAnterior > 0 ? (
-                      <ArrowUpIcon className="h-3 w-3 mr-1" />
-                    ) : (
-                      <ArrowDownIcon className="h-3 w-3 mr-1" />
-                    )}
-                    {Math.abs(resumenMensual?.comparativaMesAnterior || 0).toFixed(1)}% vs mes anterior
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
+            <MetricCard
+              title="Ingresos Totales"
+              value={formatEuro(resumenMensual?.ventasTotales || 0)}
+              change={resumenMensual?.comparativaMesAnterior || 0}
+              changeLabel="vs mes anterior"
+              icon={<ShoppingBagIcon className="h-4 w-4 text-[#02b1c4]" />}
+            />
 
-            <Card className="overflow-hidden group bg-white hover:shadow-md transition-all duration-300">
-              <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-              <CardHeader className="pb-2 relative z-10">
-                <CardTitle className="text-sm font-medium text-[#227c9d] flex items-center gap-2">
-                  <CreditCardIcon className="h-4 w-4" />
-                  Ticket Medio
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <div className="text-2xl font-bold text-[#364f6b]">{formatEuro(resumenMensual?.ticketMedio || 0)}</div>
-                <div className="flex items-center mt-1">
-                  <span className="text-xs text-[#227c9d]">por cliente</span>
-                </div>
-              </CardContent>
-            </Card>
+            <MetricCard
+              title="Ticket Medio"
+              value={formatEuro(resumenMensual?.ticketMedio || 0)}
+              footer="por cliente"
+              icon={<CreditCardIcon className="h-4 w-4 text-[#02b1c4]" />}
+            />
 
-            <Card className="overflow-hidden group bg-white hover:shadow-md transition-all duration-300">
-              <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-              <CardHeader className="pb-2 relative z-10">
-                <CardTitle className="text-sm font-medium text-[#227c9d] flex items-center gap-2">
-                  <UsersIcon className="h-4 w-4" />
-                  Unidades Vendidas
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <div className="text-2xl font-bold text-[#364f6b]">
-                  {resumenMensual?.comandas.toLocaleString() || 0}
-                </div>
-                <div className="flex items-center mt-1">
-                  <span className="text-xs text-[#227c9d]">este mes</span>
-                </div>
-              </CardContent>
-            </Card>
+            <MetricCard
+              title="Unidades Vendidas"
+              value={resumenMensual?.comandas.toLocaleString() || "0"}
+              footer="este mes"
+              icon={<UsersIcon className="h-4 w-4 text-[#02b1c4]" />}
+            />
 
-            <Card className="overflow-hidden group bg-white hover:shadow-md transition-all duration-300">
-              <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-              <CardHeader className="pb-2 relative z-10">
-                <CardTitle className="text-sm font-medium text-[#227c9d] flex items-center gap-2">
-                  <TrendingUpIcon className="h-4 w-4" />
-                  Progreso Mensual
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <div className="text-2xl font-bold text-[#364f6b]">{resumenMensual?.progreso.toFixed(1) || 0}%</div>
-                <div className="flex items-center mt-1">
-                  <div className="w-full bg-gray-100 rounded-full h-1.5">
-                    <div
-                      className="bg-[#02b1c4] h-1.5 rounded-full"
-                      style={{ width: `${resumenMensual?.progreso || 0}%` }}
-                    ></div>
-                  </div>
+            <MetricCard
+              title="Progreso Mensual"
+              value={`${resumenMensual?.progreso.toFixed(1) || 0}%`}
+              footer={
+                <div className="w-full bg-gray-100 rounded-full h-1.5 mt-1">
+                  <div
+                    className="bg-[#02b1c4] h-1.5 rounded-full"
+                    style={{ width: `${resumenMensual?.progreso || 0}%` }}
+                  ></div>
                 </div>
-              </CardContent>
-            </Card>
+              }
+              icon={<TrendingUpIcon className="h-4 w-4 text-[#02b1c4]" />}
+            />
           </div>
 
           {/* Productos destacados */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Producto estrella */}
             <Card className="overflow-hidden bg-white hover:shadow-md transition-all duration-300">
-              <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-              <CardHeader className="relative z-10">
+              <CardHeader>
                 <CardTitle className="text-lg font-semibold text-[#364f6b] flex items-center gap-2">
                   <AwardIcon className="h-5 w-5 text-[#ffcb77]" />
                   Producto Estrella del Mes
@@ -311,8 +311,7 @@ export function SalesAnalysis() {
 
             {/* Producto con peor rendimiento */}
             <Card className="overflow-hidden bg-white hover:shadow-md transition-all duration-300">
-              <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-              <CardHeader className="relative z-10">
+              <CardHeader>
                 <CardTitle className="text-lg font-semibold text-[#364f6b] flex items-center gap-2">
                   <TrendingDownIcon className="h-5 w-5 text-[#fe6d73]" />
                   Producto con Peor Rendimiento
@@ -355,7 +354,7 @@ export function SalesAnalysis() {
                     </div>
                     <div className="mt-2 flex items-center">
                       <span className="text-xs flex items-center text-[#fe6d73]">
-                        <ArrowDownIcon className="h-3 w-3 mr-1" />
+                        <TrendingDownIcon className="h-3 w-3 mr-1" />
                         {Math.abs(productoDescenso?.tendencia || 0).toFixed(1)}% vs mes anterior
                       </span>
                     </div>
@@ -365,10 +364,49 @@ export function SalesAnalysis() {
             </Card>
           </div>
 
+          {/* Ranking de Ventas por Categoría */}
+          <Card className="overflow-hidden bg-white hover:shadow-md transition-all duration-300">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-[#364f6b] flex items-center gap-2">
+                <BarChart3Icon className="h-5 w-5 text-[#02b1c4]" />
+                Ranking de Ventas por Categoría
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {categoriasSorted.slice(0, 5).map((categoria, index) => (
+                  <div key={categoria.nombre} className="relative">
+                    <div className="flex items-center mb-1">
+                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center mr-2">
+                        <span className="text-sm font-bold text-[#364f6b]">{index + 1}</span>
+                      </div>
+                      <span className="text-sm font-medium text-[#364f6b]">{categoria.nombre}</span>
+                      <span className="ml-auto text-sm font-bold text-[#364f6b]">
+                        {formatEuro(categoria.totalVentas)}
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${(categoria.totalVentas / categoriasSorted[0].totalVentas) * 100}%`,
+                          backgroundColor: categoria.color || "#02b1c4",
+                        }}
+                      ></div>
+                    </div>
+                    <div className="flex justify-between text-xs text-[#227c9d] mt-1">
+                      <span>{categoria.unidadesVendidas.toLocaleString()} unidades</span>
+                      <span>Ticket medio: {formatEuro(categoria.ticketMedio)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Gráfico de evolución diaria */}
           <Card className="overflow-hidden bg-white hover:shadow-md transition-all duration-300">
-            <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-            <CardHeader className="relative z-10">
+            <CardHeader>
               <CardTitle className="text-lg font-semibold text-[#364f6b]">Evolución Diaria de Ventas</CardTitle>
             </CardHeader>
             <CardContent>
@@ -437,10 +475,73 @@ export function SalesAnalysis() {
             </CardContent>
           </Card>
 
+          {/* Ventas por turno - Mejorado */}
+          <Card className="overflow-hidden bg-white hover:shadow-md transition-all duration-300">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-[#364f6b]">Ventas por Turno</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="h-[300px] flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        activeIndex={activeIndex}
+                        activeShape={renderActiveShape}
+                        data={ventasPorTurno}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="total"
+                        onMouseEnter={onPieEnter}
+                      >
+                        {ventasPorTurno.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={index === 0 ? "#02b1c4" : "#17c3b2"} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex flex-col justify-center space-y-6">
+                  {ventasPorTurno.map((turno, index) => (
+                    <div key={turno.turno} className="bg-gray-50 p-4 rounded-lg hover:shadow-md transition-all">
+                      <div className="flex items-center gap-2 mb-2">
+                        {index === 0 ? (
+                          <SunIcon className="h-5 w-5 text-[#02b1c4]" />
+                        ) : (
+                          <MoonIcon className="h-5 w-5 text-[#17c3b2]" />
+                        )}
+                        <div className="text-base font-medium text-[#364f6b]">{turno.turno}</div>
+                        <div className="ml-auto text-sm font-medium text-[#227c9d]">{turno.porcentaje}% del total</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <div className="text-xs text-[#227c9d]">Ventas</div>
+                          <div className="text-lg font-bold text-[#364f6b]">{formatEuro(turno.total)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-[#227c9d]">Comandas</div>
+                          <div className="text-lg font-bold text-[#364f6b]">{turno.comandas.toLocaleString()}</div>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <div className="text-xs text-[#227c9d] mb-1">Ticket medio</div>
+                        <div className="text-sm font-medium text-[#364f6b]">
+                          {formatEuro(turno.total / turno.comandas)}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Comparativa de unidades vendidas por categoría */}
           <Card className="overflow-hidden bg-white hover:shadow-md transition-all duration-300">
-            <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-            <CardHeader className="relative z-10">
+            <CardHeader>
               <CardTitle className="text-lg font-semibold text-[#364f6b]">Ventas por Categoría</CardTitle>
             </CardHeader>
             <CardContent>
@@ -482,53 +583,6 @@ export function SalesAnalysis() {
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Ventas por turno - Reemplazado con DoughnutChart */}
-          <Card className="overflow-hidden bg-white hover:shadow-md transition-all duration-300">
-            <div className="absolute inset-x-0 top-0 h-[80px] bg-gradient-to-r from-[#02b1c4]/10 via-[#17c3b2]/10 to-[#02f2d2]/10 rounded-t-lg pointer-events-none" />
-            <CardHeader className="relative z-10">
-              <CardTitle className="text-lg font-semibold text-[#364f6b]">Ventas por Turno</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="h-[250px] flex items-center justify-center">
-                  <DoughnutChart
-                    data={ventasPorTurnoDonut}
-                    formatValue={formatEuro}
-                    innerRadius={60}
-                    outerRadius={80}
-                    showLabels={true}
-                    height={250}
-                  />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <div className="space-y-4">
-                    {ventasPorTurno.map((turno, index) => (
-                      <div key={turno.turno} className="bg-gray-50 p-4 rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: index === 0 ? "#02b1c4" : "#17c3b2" }}
-                          ></span>
-                          <div className="text-sm font-medium text-[#364f6b]">{turno.turno}</div>
-                        </div>
-                        <div className="mt-2 grid grid-cols-2 gap-4">
-                          <div>
-                            <div className="text-xs text-[#227c9d]">Ventas</div>
-                            <div className="text-lg font-bold text-[#364f6b]">{formatEuro(turno.total)}</div>
-                          </div>
-                          <div>
-                            <div className="text-xs text-[#227c9d]">Comandas</div>
-                            <div className="text-lg font-bold text-[#364f6b]">{turno.comandas.toLocaleString()}</div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>

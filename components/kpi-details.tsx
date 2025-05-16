@@ -11,7 +11,7 @@ export function KpiDetails() {
         <KpiCard title="Ticket Medio" value="€40.12" change={9.9} changeLabel="vs. mismo mes año anterior" />
         <KpiCard title="Comensales Mensuales" value="2,450" change={5.2} changeLabel="vs. mismo mes año anterior" />
         <KpiCard title="Ocupación Media" value="68%" change={3} changeLabel="vs. mismo mes año anterior" />
-        <KpiCard title="Rotación de Mesas" value="1.8" change={0.2} changeLabel="vs. mismo mes año anterior" />
+        <KpiCard title="Alertas activas por puntuación encuesta" value="3" change={-2} changeLabel="vs. mes anterior" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
