@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "NÜA Smart App",
   description: "Aplicación de análisis para restaurantes",
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
