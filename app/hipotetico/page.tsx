@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { FlaskConical, TrendingUp, ArrowRight, DollarSign, BarChart2, Users, RefreshCw, Info } from "lucide-react"
+import { LineChart } from "@/components/ui/line-chart"
 
 export default function HipoteticoPage() {
   // Estado para los controles del simulador
@@ -366,30 +367,39 @@ export default function HipoteticoPage() {
           <h3 className="text-sm font-medium text-[#364f6b] mb-3">Proyección a 12 Meses</h3>
           <p className="text-xs text-[#227c9d] mb-3">Estimación de resultados basada en los cambios simulados</p>
 
-          <div className="h-48 flex items-end justify-between gap-1">
-            {[
-              { month: "May", value: resultados.beneficioMensual },
-              { month: "Jun", value: resultados.beneficioMensual * 1.05 },
-              { month: "Jul", value: resultados.beneficioMensual * 1.15 },
-              { month: "Ago", value: resultados.beneficioMensual * 1.25 },
-              { month: "Sep", value: resultados.beneficioMensual * 1.1 },
-              { month: "Oct", value: resultados.beneficioMensual * 1.05 },
-              { month: "Nov", value: resultados.beneficioMensual * 1 },
-              { month: "Dic", value: resultados.beneficioMensual * 1.3 },
-              { month: "Ene", value: resultados.beneficioMensual * 0.9 },
-              { month: "Feb", value: resultados.beneficioMensual * 0.95 },
-              { month: "Mar", value: resultados.beneficioMensual * 1.05 },
-              { month: "Abr", value: resultados.beneficioMensual * 1.15 },
-            ].map((month, i) => {
-              const maxValue = resultados.beneficioMensual * 1.3
-              const height = `${(month.value / maxValue) * 100}%`
-              return (
-                <div key={i} className="relative h-full flex-1 flex flex-col justify-end">
-                  <div className="bg-[#02b1c4] rounded-t w-full" style={{ height }}></div>
-                  <span className="text-[9px] text-[#227c9d] text-center mt-1">{month.month}</span>
-                </div>
-              )
-            })}
+          <div className="h-48">
+            <LineChart
+              data={[
+                { month: "May", value: resultados.beneficioMensual },
+                { month: "Jun", value: resultados.beneficioMensual * 1.05 },
+                { month: "Jul", value: resultados.beneficioMensual * 1.15 },
+                { month: "Ago", value: resultados.beneficioMensual * 1.25 },
+                { month: "Sep", value: resultados.beneficioMensual * 1.1 },
+                { month: "Oct", value: resultados.beneficioMensual * 1.05 },
+                { month: "Nov", value: resultados.beneficioMensual * 1 },
+                { month: "Dic", value: resultados.beneficioMensual * 1.3 },
+                { month: "Ene", value: resultados.beneficioMensual * 0.9 },
+                { month: "Feb", value: resultados.beneficioMensual * 0.95 },
+                { month: "Mar", value: resultados.beneficioMensual * 1.05 },
+                { month: "Abr", value: resultados.beneficioMensual * 1.15 },
+              ]}
+              getLabel={(item) => item.month}
+              getValue={(item) => item.value}
+              gradientColor="#02b1c4"
+              height={180}
+              showTooltip={true}
+              renderTooltip={(item) => (
+                <>
+                  <div className="text-xs font-bold text-[#364f6b] mb-1">{item.month}</div>
+                  <div className="text-xs text-[#364f6b]">
+                    <div className="flex justify-between">
+                      <span>Beneficio:</span>
+                      <span className="font-medium">€{Math.round(item.value).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </>
+              )}
+            />
           </div>
 
           <div className="flex justify-between items-center mt-2">
