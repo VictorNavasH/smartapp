@@ -2,12 +2,14 @@
 
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { SalesAnalysis } from "@/components/analysis/sales-analysis"
-import { ProductAnalysis } from "@/components/analysis/product-analysis"
-import { BreakEvenAnalysis } from "@/components/analysis/break-even-analysis"
+import { SalesOverview } from "@/components/analysis/sales-overview"
+import { SalesEvolution } from "@/components/analysis/sales-evolution"
+import { ProductsAnalysis } from "@/components/analysis/products-analysis"
+import { TicketsAnalysis } from "@/components/analysis/tickets-analysis"
+import { ConsumptionPatterns } from "@/components/analysis/consumption-patterns"
 
 export default function VentasPage() {
-  const [activeTab, setActiveTab] = useState("ventas")
+  const [activeTab, setActiveTab] = useState("resumen")
 
   return (
     <div className="space-y-4">
@@ -16,38 +18,58 @@ export default function VentasPage() {
         <p className="text-xs text-[#227c9d]">Evolución y comportamiento de ventas por categoría y producto</p>
       </div>
 
-      <Tabs defaultValue="ventas" className="w-full" onValueChange={setActiveTab}>
+      <Tabs defaultValue="resumen" className="w-full" onValueChange={setActiveTab}>
         <TabsList className="border-b w-full justify-start mb-4">
           <TabsTrigger
-            value="ventas"
+            value="resumen"
             className="relative h-9 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:text-primary"
           >
-            Análisis de Ventas
+            Resumen
+          </TabsTrigger>
+          <TabsTrigger
+            value="evolucion"
+            className="relative h-9 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:text-primary"
+          >
+            Evolución
           </TabsTrigger>
           <TabsTrigger
             value="productos"
             className="relative h-9 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:text-primary"
           >
-            Análisis de Productos
+            Productos
           </TabsTrigger>
           <TabsTrigger
-            value="equilibrio"
+            value="tickets"
             className="relative h-9 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:text-primary"
           >
-            Punto de Equilibrio
+            Tickets
+          </TabsTrigger>
+          <TabsTrigger
+            value="patrones"
+            className="relative h-9 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:text-primary"
+          >
+            Patrones
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="ventas" className="mt-0">
-          <SalesAnalysis />
+        <TabsContent value="resumen" className="mt-0">
+          <SalesOverview />
+        </TabsContent>
+
+        <TabsContent value="evolucion" className="mt-0">
+          <SalesEvolution />
         </TabsContent>
 
         <TabsContent value="productos" className="mt-0">
-          <ProductAnalysis />
+          <ProductsAnalysis />
         </TabsContent>
 
-        <TabsContent value="equilibrio" className="mt-0">
-          <BreakEvenAnalysis />
+        <TabsContent value="tickets" className="mt-0">
+          <TicketsAnalysis />
+        </TabsContent>
+
+        <TabsContent value="patrones" className="mt-0">
+          <ConsumptionPatterns />
         </TabsContent>
       </Tabs>
     </div>
